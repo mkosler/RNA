@@ -23,6 +23,7 @@ local function buildMatrix(size)
 end
 
 --- Check if a and b are an RNA pair
+-- O(1)
 -- @param a One RNA letter
 -- @param b One RNA letter
 -- @return Whether they pair together (i.e., AU or GC)
@@ -43,6 +44,7 @@ local function isPair(a, b)
 end
 
 --- Searches the given range for any matches
+-- O(n), where n = j - i
 -- @param sequence The RNA sequence
 -- @param opt The dynamic programming table
 -- @param i The beginning of the range
@@ -96,6 +98,7 @@ local function checkRange(sequence, opt, i, j)
 end
 
 --- Given a sequence of RNA molecules,
+-- O(n^3)
 -- find the best fold which produces the greatest number of pairs
 -- @param sequence The RNA sequence
 -- @return A table containing all the pairs for the best fold
