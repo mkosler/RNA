@@ -42,7 +42,7 @@ local function buildMatrix(size)
   for r = 1, size do
     t[r] = {}
     for c = 1, size do
-      t[r][c] = 0
+      t[r][c] = {}
     end
   end
   return t
