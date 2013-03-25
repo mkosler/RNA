@@ -133,11 +133,6 @@ local function findBestPairs(sequence)
       -- Guard against sharp turns
       if math.abs(i - j) > 4 then
         opt[i][j] = checkRange(sequence, opt, i, j)
-        print(string.format('(%d, %d)', i, j))
-        for _,v in ipairs(opt[i][j]) do
-          print(string.format('{ %s }', table.concat(v, ', ')))
-        end
-        print()
       end
     end
   end
