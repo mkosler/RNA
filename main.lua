@@ -36,6 +36,6 @@ input:close()
 local output = io.open(arg[2], 'w')
 for _,sequence in ipairs(sequences) do
   local total = RNA.findBestPairs(sequence)
-  output:write(string.format('%d\n', total))
+  output:write(string.format('%2d\n', total))
 end
 output:close()
