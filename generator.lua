@@ -14,7 +14,7 @@ local values = { 'A', 'U', 'G', 'C' }
 
 local f = io.open(string.format('input/test_%d.txt', size), 'w')
 
-for i = 1, 100 do
+for i = 1, 25 do
   local t = {}
   for j = 1, size do
     -- To save memory, add the random values to a table

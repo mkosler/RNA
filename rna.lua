@@ -18,6 +18,7 @@ local function buildMatrix(size)
       t[r][c] = {}
     end
   end
+
   return t
 end
 

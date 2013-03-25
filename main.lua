@@ -1,3 +1,5 @@
+require 'profiler'
+
 -- Include the rna module
 local RNA = require 'rna'
 
@@ -33,9 +35,11 @@ local input = io.open(arg[1], 'r')
 local sequences = getSequences(input)
 input:close()
 
+profiler.start(string.format('timing/test_%d.txt', #sequences[1]))
 local output = io.open(arg[2], 'w')
 for _,sequence in ipairs(sequences) do
   local best = RNA.findBestPairs(sequence)
+
   output:write(string.format('%2d | ', #best))
   for _,v in ipairs(best) do
     output:write(string.format('{ %s } ', table.concat(v, ', ')))
@@ -43,3 +47,4 @@ for _,sequence in ipairs(sequences) do
   output:write('\n')
 end
 output:close()
+profiler.stop()
