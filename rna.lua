@@ -5,33 +5,6 @@
 -- - findBestPairs(sequence)
 --------------------------------------------------------------
 
---- Stringify the opt table (for debugging)
--- @param opt The opt table
--- @return The opt table, as a string
-local function stringifyOptTable(opt)
-  local s = '   | '
-  for i = 1, #opt do
-    s = s .. string.format('%2d ', i)
-  end
-  s = s .. '\n'
-  s = s .. string.rep('-', s:len())
-  s = s .. '\n'
-
-  for i = 1, #opt do
-    s = s .. string.format('%2d | ', i)
-    for j = 1, #opt[i] do
-      if j >= i then
-        s = s .. string.format('%2d ', opt[i][j])
-      else
-        s = s .. '   '
-      end
-    end
-    s = s .. '\n'
-  end
-
-  return s
-end
-
 --- Builds a square matrix
 -- @param size The length of a size of the square matrix
 -- @return A square matrix of size * size
@@ -78,11 +51,17 @@ local function checkRange(sequence, opt, i, j)
   local fMax = {}
   local fT = 0
 
+  -- Anything less too close will just waste time,
+  -- so subtract 5 from j
   for t = i, j - 5 do
     if isPair(sequence[t], sequence[j]) then
+      -- Get the existing best pairs of opt[i][t - 1] and opt[t + 1][j - 1]
       local lhs = opt[i][t - 1] or {}
       local rhs = opt[t + 1][j - 1] or {}
 
+      -- In Lua, table's are passed by reference, so to not interfere
+      -- with the opt table, copy the values from lhs and rhs into
+      -- another table, cMax
       local cMax = {}
       for _,v in ipairs(lhs) do
         table.insert(cMax, v)
@@ -91,6 +70,7 @@ local function checkRange(sequence, opt, i, j)
         table.insert(cMax, v)
       end
 
+      -- Finds the best t to use for later
       if #fMax <= #cMax then
         fMax = cMax
         fT = t
@@ -98,19 +78,20 @@ local function checkRange(sequence, opt, i, j)
     end
   end
 
+  -- If I have found a pair
   if fT > 0 then
+    -- Add in the new pair
     table.insert(fMax, { fT, j })
     
+    -- See if the number of pairs with this new pair is better
+    -- than what we have found earlier
     if #opt[i][j - 1] < #fMax then
       return fMax
     end
   end
 
-  local ret = {}
-  for _,v in ipairs(opt[i][j - 1]) do
-    table.insert(ret, v)
-  end
-  return ret
+  -- Otherwise, just copy over the value from the previous span
+  return opt[i][j - 1]
 end
 
 --- Given a sequence of RNA molecules,
