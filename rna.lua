@@ -42,7 +42,7 @@ local function buildMatrix(size)
   for r = 1, size do
     t[r] = {}
     for c = 1, size do
-      t[r][c] = 0
+      t[r][c] = {}
     end
   end
   return t
@@ -75,39 +75,41 @@ end
 -- @param j The end of the range
 -- @return The value of the opt table @ (i, j)
 local function checkRange(sequence, opt, i, j)
-  -- If we find at least one t which pairs with j, flag it
-  local found = false
-  local fMax = 0
-  local fT = -1
+  local fMax = {}
+  local fT = 0
 
-  -- Only check values in the range sufficiently far away
-  -- from j
   for t = i, j - 5 do
-    -- Check to see if sequence[t] and sequence[j] match
     if isPair(sequence[t], sequence[j]) then
-      -- Flag the sequence
-      found = true
+      local lhs = opt[i][t - 1] or {}
+      local rhs = opt[t + 1][j - 1] or {}
 
-      -- If there are any more matches between
-      -- t and j, only care about the maximum of those matches
-      -- NOTE: If i == t, then we may go out of bounds, so
-      -- replace the value with 0
-      --fMax = math.max(fMax, opt[t + 1][j - 1] + (opt[i][t - 1] or 0))
-      local value = opt[t + 1][j - 1] + (opt[i][t - 1] or 0)
-      if value > fMax then
-        fMax = value
+      local cMax = {}
+      for _,v in ipairs(lhs) do
+        table.insert(cMax, v)
+      end
+      for _,v in ipairs(rhs) do
+        table.insert(cMax, v)
+      end
+
+      if #fMax <= #cMax then
+        fMax = cMax
         fT = t
       end
     end
   end
 
-  -- Initialize our return as the best pairs from the
-  -- previous range
-  local ret = opt[i][j - 1]
-  if found then
-    ret = math.max(ret, 1 + fMax)
+  if fT > 0 then
+    table.insert(fMax, { fT, j })
+    
+    if #opt[i][j - 1] < #fMax then
+      return fMax
+    end
   end
 
+  local ret = {}
+  for _,v in ipairs(opt[i][j - 1]) do
+    table.insert(ret, v)
+  end
   return ret
 end
 
@@ -131,6 +133,11 @@ local function findBestPairs(sequence)
       -- Guard against sharp turns
       if math.abs(i - j) > 4 then
         opt[i][j] = checkRange(sequence, opt, i, j)
+        print(string.format('(%d, %d)', i, j))
+        for _,v in ipairs(opt[i][j]) do
+          print(string.format('{ %s }', table.concat(v, ', ')))
+        end
+        print()
       end
     end
   end
